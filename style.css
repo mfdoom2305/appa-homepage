@@ -1,0 +1,359 @@
+:root {
+  --accent: #e6e9ff;
+  --accent-glow: rgba(214, 220, 255, 0.5);
+  --lavender: #a9a2ff;
+  --glass: rgba(36, 34, 92, 0.34);
+  --line: rgba(255, 255, 255, 0.16);
+  --text: #f1f2ff;
+  --muted: rgba(228, 230, 255, 0.62);
+  --ink: #2a2766;
+  --danger: #ff9fb2;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: "Poppins", "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+  background: #4b4894;
+  overflow: hidden;
+}
+
+button, input { font-family: inherit; }
+
+/* Sized so the moon (40% down the image) always sits at the exact centre
+   of the screen, while the image still covers the whole window. */
+.backdrop {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  height: max(125vh, 62.5vw);
+  aspect-ratio: 1920 / 1200;
+  transform: translate(-50%, -40%);
+  transform-origin: 50% 40%;
+  background: url("background.png") center / cover no-repeat;
+  z-index: -2;
+  animation: breathe 40s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+  from { scale: 1; }
+  to   { scale: 1.04; }
+}
+
+/* The glider that chases the cursor (positioned by script.js) */
+.glider {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+  filter: drop-shadow(0 6px 10px rgba(20, 16, 70, 0.25));
+}
+
+/* ---------- Layout: to-do left, apps right, tops aligned ---------- */
+.layout {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 22vh 2.5vw 4vh 5vw;
+}
+
+.column {
+  width: min(380px, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  background: var(--glass);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 30px 80px rgba(20, 16, 70, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.todo { padding: 24px 22px 20px; min-height: 0; }
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h1 {
+  font-weight: 500;
+  font-size: 26px;
+  margin: 2px 0 14px;
+}
+
+/* ---------- Progress ---------- */
+.progress { display: flex; align-items: center; gap: 12px; }
+
+.progress-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--lavender), var(--accent));
+  box-shadow: 0 0 12px var(--accent-glow);
+  transition: width 0.5s cubic-bezier(.2, .8, .2, 1);
+}
+
+.progress-label {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  min-width: 38px;
+  text-align: right;
+}
+
+/* ---------- Inputs ---------- */
+input {
+  font-size: 14px;
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.07);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+input::placeholder { color: var(--muted); }
+input:focus { border-color: rgba(230, 233, 255, 0.55); background: rgba(255, 255, 255, 0.12); }
+
+.add { display: flex; gap: 8px; margin: 18px 0 8px; }
+.add input { flex: 1; min-width: 0; }
+
+.add button {
+  width: 42px;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(214, 220, 255, 0.25);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.add button:hover { transform: scale(1.04); box-shadow: 0 0 24px var(--accent-glow); }
+
+/* ---------- Tasks ---------- */
+.tasks {
+  list-style: none;
+  overflow-y: auto;
+  margin: 0 -6px;
+  padding: 0 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 8px;
+  border-radius: 12px;
+  animation: rise 0.25s ease-out;
+  transition: background 0.15s;
+}
+
+.task:hover { background: rgba(255, 255, 255, 0.07); }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.check {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.check svg { width: 12px; height: 12px; opacity: 0; transition: opacity 0.2s; }
+.check:hover { border-color: var(--accent); }
+
+.task.done .check { background: var(--accent); border-color: var(--accent); }
+.task.done .check svg { opacity: 1; }
+
+.text { flex: 1; font-size: 14px; word-break: break-word; transition: color 0.3s; }
+
+.task.done .text {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(230, 233, 255, 0.6);
+}
+
+.delete, .app-remove {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+
+.delete { flex: none; width: 28px; height: 28px; border-radius: 8px; font-size: 18px; }
+.task:hover .delete, .delete:focus-visible { opacity: 1; }
+.delete:hover { color: var(--danger); background: rgba(255, 159, 178, 0.14); }
+
+.empty { text-align: center; color: var(--muted); font-size: 13px; padding: 12px 0 4px; }
+
+/* ---------- News ---------- */
+.news { flex: none; padding: 16px 22px 18px; gap: 6px; }
+
+.news-title {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+a.news-title[href]:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--lavender); text-underline-offset: 3px; }
+
+.news-meta { font-size: 12px; color: var(--muted); }
+.news-meta a { color: var(--muted); }
+.news-meta a:hover { color: var(--text); }
+
+/* ---------- Apps ---------- */
+.apps-panel { flex: none; padding: 18px 14px 14px; }
+.apps-panel h1 { margin: 0 4px 12px; }
+
+.apps {
+  display: grid;
+  grid-template-columns: repeat(3, 76px);
+  gap: 6px;
+  max-height: 62vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px 8px;
+  border-radius: 16px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  animation: rise 0.25s ease-out;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s;
+}
+
+.app:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--line);
+  transform: translateY(-2px);
+}
+
+.app-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 14px rgba(20, 16, 70, 0.25);
+}
+
+.app-icon img { width: 24px; height: 24px; }
+
+.app-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-remove {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+}
+.app:hover .app-remove, .app-remove:focus-visible { opacity: 1; }
+.app-remove:hover { color: var(--danger); background: rgba(255, 159, 178, 0.18); }
+
+.app-add {
+  justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  border: 1.5px dashed rgba(255, 255, 255, 0.28);
+  background: transparent;
+}
+.app-add:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.5); border-style: dashed; }
+
+.app-add .plus {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* The Add tile turns into a URL box in place */
+.app-add.editing { border-style: solid; border-color: rgba(230, 233, 255, 0.55); cursor: default; }
+
+.app-add input {
+  width: 100%;
+  padding: 5px 6px;
+  font-size: 11px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 760px) {
+  body { overflow: auto; }
+  .layout { flex-direction: column; align-items: center; height: auto; padding: 8vh 16px; }
+  .column { max-height: none; }
+  .glider { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *:not(.glider) { animation: none !important; transition: none !important; }
+}

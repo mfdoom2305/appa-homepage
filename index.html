@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Tab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="backdrop" id="backdrop" aria-hidden="true"></div>
+  <img class="glider" id="glider" src="glider.png" alt="" aria-hidden="true">
+
+  <div class="layout">
+    <div class="column">
+      <!-- To-do list -->
+      <main class="panel todo">
+        <header>
+          <p class="eyebrow" id="date"></p>
+          <h1>Today</h1>
+          <div class="progress">
+            <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+            <span class="progress-label" id="progress-label">0%</span>
+          </div>
+        </header>
+
+        <form class="add" id="add-form" autocomplete="off">
+          <input id="add-input" type="text" placeholder="Add a task…" maxlength="200" aria-label="New task">
+          <button type="submit" aria-label="Add task">+</button>
+        </form>
+
+        <ul class="tasks" id="tasks"></ul>
+        <p class="empty" id="empty">Nothing to do. Enjoy the sky.</p>
+      </main>
+
+      <!-- AI story of the day -->
+      <section class="panel news" aria-live="polite">
+        <p class="eyebrow">AI story of the day</p>
+        <a class="news-title" id="news-title">Finding today's story…</a>
+        <p class="news-meta" id="news-meta"></p>
+      </section>
+    </div>
+
+    <!-- Apps -->
+    <aside class="panel apps-panel">
+      <h1>Quick Launch</h1>
+      <div class="apps" id="apps"></div>
+    </aside>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
